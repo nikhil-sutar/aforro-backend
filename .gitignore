@@ -1,0 +1,33 @@
+# Python
+*.pyc
+*.pyo
+__pycache__/
+*.pyd
+*.db
+
+
+# Virtual environment
+.venv/
+
+
+# Django
+*.log
+*.pot
+*.pyc
+*.mo
+*.swp
+*.DS_Store
+media/
+
+
+# VS Code
+.vscode/
+
+
+# Environment variables
+.env
+
+# Misc
+*.bak
+*.dir
+*.datdocs/

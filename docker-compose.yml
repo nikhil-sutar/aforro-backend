@@ -1,0 +1,69 @@
+services:
+  # 1. DATABASE
+  ecommerce_db:
+    image: postgres:15
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # 2. REDIS
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  # 3. DJANGO WEB SERVER (NEW)
+  web:
+    build: .
+    container_name: django_web
+    # Point to where manage.py is located inside the container
+    working_dir: /app/core 
+    # runserver 0.0.0.0:8000 allows external access
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - ecommerce_db
+      - redis
+    environment:
+      - DB_HOST=ecommerce_db
+      - REDIS_HOST=redis
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASS=${EMAIL_PASS}
+
+  # 4. CELERY WORKER (NEW)
+  celery_worker:
+    build: .
+    container_name: celery_worker
+    working_dir: /app/core
+    # Ensure '-A core' matches your project folder name
+    command: celery -A core worker --loglevel=info
+    volumes:
+      - .:/app
+    depends_on:
+      - ecommerce_db
+      - redis
+    environment:
+      - DB_HOST=ecommerce_db
+      - REDIS_HOST=redis
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASS=${EMAIL_PASS}
+
+volumes:
+  postgres_data:
