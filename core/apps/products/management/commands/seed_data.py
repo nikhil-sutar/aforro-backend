@@ -5,8 +5,8 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from decimal import Decimal
 
-from products.models import Category, Product
-from stores.models import Store, Inventory
+from apps.products.models import Category, Product
+from apps.stores.models import Store, Inventory
 
 class Command(BaseCommand):
     help = 'Seeds database with unique data using fake.unique'
