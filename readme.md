@@ -29,7 +29,7 @@ A production-ready, containerized E-commerce backend module built with Django an
 
 #### Step 1: Clone the repository
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/nikhil-sutar/aforro-backend.git
 cd core
 ```
 
